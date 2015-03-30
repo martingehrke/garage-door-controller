@@ -3,11 +3,14 @@
   {"name" : "Left",
    "relay_pin" : 23,
    "state_pin" : 17,
-   "approx_time_to_close" : 10,
-   "approx_time_to_open" : 10},
+   "approx_time_to_close" : 20,
+   "approx_time_to_open" : 20},
   "right" : 
   {"name" : "Right",
    "relay_pin" : 24,
    "state_pin" : 27,
-   "approx_time_to_close" : 10,
-   "approx_time_to_open" : 10}}}
+   "approx_time_to_close" : 25,
+   "approx_time_to_open" : 25}},
+"pushbullet" :
+ {"api_key" : "<put key here>"}
+}
