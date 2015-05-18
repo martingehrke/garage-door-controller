@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# this script will check to see if your door is open and push
+#  a notificatino to your phone 
+
+import RPi.GPIO as gpio
+import json
+import argparse
+from pushbullet import PushBullet
+
+def door_is_open(door):
+        gpio.setup(door['state_pin'],gpio.IN, pull_up_down=gpio.PUD_UP)
+
+        if gpio.input(door['state_pin']) == gpio.HIGH:
+		return True
+
+def pushAlert(phone,door):
+	
+	success, push = phone.push_link("The %s garage door is open" % door['name'].lower(), "http://192.168.1.107:8080")
+	
+
+def main():
+	parser = argparse.ArgumentParser()
+
+        parser.add_argument('-c', '--config', action='store', dest='config_file',
+                type=str, help='config file to load', default="/home/martin/config/config.json")
+
+        args = parser.parse_args()
+
+        config_file = open(args.config_file)
+	full_config = json.load(config_file)
+        doors = full_config['doors']
+        pb_config = full_config['pushbullet']
+        config_file.close()
+
+	pb = PushBullet(pb_config['api_key'])
+        gpio.setmode(gpio.BCM)
+
+	device_name = 'Phone'
+
+	device = next((x for x in pb.devices if x.nickname == device_name), None)
+
+	if device.nickname == device_name:
+		for door in doors:
+			if door_is_open(doors[door]):
+				pushAlert(device,doors[door])
+	else:
+		print "Wrong device"
+		print phone
+		
+
+if __name__ == "__main__":
+        try:
+                main()
+        finally:
+                gpio.cleanup()
